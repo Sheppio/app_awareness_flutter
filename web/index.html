@@ -32,15 +32,21 @@
   <title>app_awareness_flutter</title>
   <link rel="manifest" href="manifest.json">
 
+  <link rel="stylesheet" type="text/css" href="styles.css">
+
   <script>
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = null;
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 </head>
 <body>
+  <img src="images/logo.png" class="center" id="logo"/>
   <script>
+    const start = Date.now();
+    //console.log(Date.now() + ' Load');
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
@@ -48,8 +54,24 @@
           serviceWorkerVersion: serviceWorkerVersion,
         },
         onEntrypointLoaded: function(engineInitializer) {
+          const entrypointLoadedTS = Date.now();
+          console.log('EntrypointLoaded in '+ (entrypointLoadedTS-start).toString() + 'ms');
+          //Fade isn't smooth if done here.  Could to initializeEngine() when completes
+          // $("#logo").fadeOut(150, function () {
+          //   console.log('Fade out complete.');
+          // });
           engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
+            //console.log('InitializeEngine');
+            const initializeEngineTS = Date.now();
+            console.log('initializeEngine reached in '+ (initializeEngineTS-entrypointLoadedTS).toString() + 'ms');
+      
+
+            $("#logo").fadeOut(150, function () {
+              appRunner.runApp();
+            });
+            //appRunner.runApp();
+            const appRunningTS = Date.now();
+            console.log('appRunning in '+ (appRunningTS-initializeEngineTS).toString() + 'ms');
           });
         }
       });
